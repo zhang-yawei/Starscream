@@ -50,7 +50,7 @@ FrameCollectorDelegate, HTTPHandlerDelegate {
     
     public func start(request: URLRequest) {
         mutex.wait()
-        let isConnected = canSend
+        let isConnected = canSend // 加锁
         mutex.signal()
         if isConnected {
             return

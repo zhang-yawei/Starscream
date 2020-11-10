@@ -74,17 +74,18 @@ extension WebSocketClient {
     }
 }
 
+// WebSocket事件定义.
 public enum WebSocketEvent {
-    case connected([String: String])
-    case disconnected(String, UInt16)
-    case text(String)
-    case binary(Data)
-    case pong(Data?)
-    case ping(Data?)
-    case error(Error?)
+    case connected([String: String]) // 连接
+    case disconnected(String, UInt16) // 断开连接
+    case text(String) // 字符串数据包
+    case binary(Data) // 二进制数据包
+    case pong(Data?) // pong 报文
+    case ping(Data?) // ping 报文
+    case error(Error?) // //error
     case viabilityChanged(Bool)
     case reconnectSuggested(Bool)
-    case cancelled
+    case cancelled // 取消
 }
 
 public protocol WebSocketDelegate: class {

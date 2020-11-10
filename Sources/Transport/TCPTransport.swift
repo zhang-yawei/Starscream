@@ -29,6 +29,7 @@ public enum TCPTransportError: Error {
 }
 
 @available(macOS 10.14, iOS 12.0, watchOS 5.0, tvOS 12.0, *)
+//TCP传输
 public class TCPTransport: Transport {
     private var connection: NWConnection?
     private let queue = DispatchQueue(label: "com.vluxe.starscream.networkstream", attributes: [])
@@ -136,9 +137,11 @@ public class TCPTransport: Transport {
         if !isRunning {
             return
         }
+        // 接受数据
         connection?.receive(minimumIncompleteLength: 2, maximumLength: 4096, completion: {[weak self] (data, context, isComplete, error) in
             guard let s = self else {return}
             if let data = data {
+                // 状态变更为接受数据中
                 s.delegate?.connectionChanged(state: .receive(data))
             }
             
@@ -146,7 +149,7 @@ public class TCPTransport: Transport {
             if let context = context, context.isFinal, isComplete {
                 return
             }
-            
+            // roop 获取数据
             if error == nil {
                 s.readLoop()
             }

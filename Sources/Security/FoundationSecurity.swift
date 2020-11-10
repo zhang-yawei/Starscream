@@ -38,6 +38,7 @@ public class FoundationSecurity  {
 }
 
 extension FoundationSecurity: CertificatePinning {
+    //校验证书和本地cer
     public func evaluateTrust(trust: SecTrust, domain: String?, completion: ((PinningState) -> ())) {
         if allowSelfSigned {
             completion(.success)
@@ -77,6 +78,8 @@ extension FoundationSecurity: CertificatePinning {
 }
 
 extension FoundationSecurity: HeaderValidator {
+//    如果客户端收到的Sec-WebSocket-Acceptheader字段或者Sec-WebSocket-Acceptheader字段不等于通过Sec-WebSocket-Key字段的值（作为一个字符串，而不是base64解码后）和"258EAFA5-E914-47DA-95CA-C5AB0DC85B11"串联起来，忽略所有前后空格进行base64 SHA-1编码的值，那么客户端必须关闭连接。
+    // 校验header
     public func validate(headers: [String: String], key: String) -> Error? {
         if let acceptKey = headers[HTTPWSHeader.acceptName] {
             let sha = "\(key)258EAFA5-E914-47DA-95CA-C5AB0DC85B11".sha1Base64()
@@ -89,6 +92,7 @@ extension FoundationSecurity: HeaderValidator {
 }
 
 private extension String {
+    //base64 SHA-1
     func sha1Base64() -> String {
         let data = self.data(using: .utf8)!
         let pointer = data.withUnsafeBytes { (bytes: UnsafeRawBufferPointer) -> [UInt8] in

@@ -102,6 +102,18 @@ public class FoundationHTTPHandler: HTTPHandler {
         self.delegate = delegate
     }
     
+    /*
+    GET / HTTP/1.1
+    Host: www.enjoytoday.cn
+    Connection: keep-alive
+    Upgrade-Insecure-Requests: 1
+    User-Agent: Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/51.0.2704.84 Safari/537.36
+    Referer: http://www.enjoytoday.cn/posts/326
+    Accept-Encoding: gzip, deflate, sdch
+    Accept-Language: zh-CN,zh;q=0.8
+     */
+
+    // 找到http结束的位置
     private func findEndOfHTTP(data: Data) -> Int {
         let endBytes = [UInt8(ascii: "\r"), UInt8(ascii: "\n"), UInt8(ascii: "\r"), UInt8(ascii: "\n")]
         var pointer = [UInt8]()

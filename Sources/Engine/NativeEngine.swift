@@ -81,11 +81,13 @@ public class NativeEngine: NSObject, Engine, URLSessionDataDelegate, URLSessionW
         delegate?.didReceive(event: event)
     }
     
+    // 协议
     public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didOpenWithProtocol protocol: String?) {
         let p = `protocol` ?? ""
         broadcast(event: .connected([HTTPWSHeader.protocolName: p]))
     }
     
+    // 关闭,断开连接
     public func urlSession(_ session: URLSession, webSocketTask: URLSessionWebSocketTask, didCloseWith closeCode: URLSessionWebSocketTask.CloseCode, reason: Data?) {
         var r = ""
         if let d = reason {

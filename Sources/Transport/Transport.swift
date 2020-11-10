@@ -23,7 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////
 
 import Foundation
-
+// 网络连接状态
 public enum ConnectionState {
     case connected
     case waiting
@@ -43,10 +43,12 @@ public enum ConnectionState {
 }
 
 public protocol TransportEventClient: class {
+    // 连接状态改变
     func connectionChanged(state: ConnectionState)
 }
 
 public protocol Transport: class {
+    
     func register(delegate: TransportEventClient)
     func connect(url: URL, timeout: Double, certificatePinning: CertificatePinning?)
     func disconnect()

@@ -40,6 +40,7 @@ public struct HTTPWSHeader {
     static let keyName            = "Sec-WebSocket-Key"
     static let originName         = "Origin"
     static let acceptName         = "Sec-WebSocket-Accept"
+    //如果服务端选择接受一条连接，他必须发送一个如下说明的有效的HTTP请求来进行相应。像RFC2616中说明的一样，状态码为101的状态行。比如看上去像这种的："HTTP/1.1 101 Switching Protocols"。
     static let switchProtocolCode = 101
     static let defaultSSLSchemes  = ["wss", "https"]
     
@@ -62,11 +63,17 @@ public struct HTTPWSHeader {
             }
             req.setValue(origin, forHTTPHeaderField: HTTPWSHeader.originName)
         }
+        //这个请求必须包含一个Upgradeheader字段，它的值必须包含"websocket"。
         req.setValue(HTTPWSHeader.upgradeValue, forHTTPHeaderField: HTTPWSHeader.upgradeName)
+        //请求必须包含一个Connectionheader字段，它的值必须包含"Upgrade"。
         req.setValue(HTTPWSHeader.connectionValue, forHTTPHeaderField: HTTPWSHeader.connectionName)
+        //这个请求必须包含一个名为Sec-WebSocket-Version的字段。这个header字段的值必须为13。注意：尽管这个文档草案的版本（09，10，11和12）都已经发布（这些协议大部分是编辑上的修改和澄清，而不是对无线协议的修改），9，10，11，12这四个值不被认为是有效的Sec-WebSocket-Version的值。这些值被IANA保留，但是没有被用到过，以后也不会被使用。
         req.setValue(HTTPWSHeader.versionValue, forHTTPHeaderField: HTTPWSHeader.versionName)
+        //请求必须包含一个名为Sec-WebSocket-Key的header字段。这个header字段的值必须是由一个随机生成的16字节的随机数通过base64（见RFC4648的第四章）编码得到的。每一个连接都必须随机的选择随机数。
+
         req.setValue(secKeyValue, forHTTPHeaderField: HTTPWSHeader.keyName)
         
+        //这个请求可能还会包含其他的文档中定义的header字段，如cookie（RFC6265）或者认证相关的header字段如Authorization字段（RFC2616）。
         if let cookies = HTTPCookieStorage.shared.cookies(for: url), !cookies.isEmpty {
             let headers = HTTPCookie.requestHeaderFields(with: cookies)
             for (key, val) in headers {
@@ -78,6 +85,7 @@ public struct HTTPWSHeader {
             let val = "permessage-deflate; client_max_window_bits; server_max_window_bits=15"
             req.setValue(val, forHTTPHeaderField: HTTPWSHeader.extensionName)
         }
+        //如果客户端收到的响应包含一个Sec-WebSocket-Extensionsheader字段，并且这个字段使用的extension值在客户端的握手请求里面不存在（即服务端使用了一个客户端请求中不存在的值），那么客户端必须关闭连接。（解析这个header字段来确定使用哪个扩展在9.1节中有讨论。）
         let hostValue = req.allHTTPHeaderFields?[HTTPWSHeader.hostName] ?? "\(parts.host):\(parts.port)"
         req.setValue(hostValue, forHTTPHeaderField: HTTPWSHeader.hostName)
         return req
